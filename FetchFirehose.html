@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Pricing Calculator</title>
+<style>
+  body {
+    background-color: grey;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-top: 20px;
+    color: white;
+  }
+  
+  form {
+    background-color: lavender;
+    border: 2px solid black;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+    box-sizing: border-box;
+  }
+  
+  label {
+    display: inline-block;
+    width: 260px;
+    font-weight: bold;
+    vertical-align: top;
+  }
+  
+  select, input[type="checkbox"] {
+    vertical-align: top;
+    margin-top: 4px;
+  }
+  
+  button {
+    display: block;
+    margin: 20px auto;
+  }
+  
+  #summary {
+    text-align: center;
+    background-color: lavender;
+    border: 2px solid black;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 600px;
+    box-sizing: border-box;
+  }
+</style>
+</head>
+<body>
+<h1>Data Pricing Calculator</h1>
+
+<form>
+  <div>
+    <label for="categoryType">Select Category Type:</label>
+    <select id="categoryType">
+      <option value="own">Own Categories</option>
+      <option value="all">All Categories</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="categories">Select Categories:</label>
+    <select id="categories" multiple>
+      <option value="item">Item Purchase Data</option>
+      <option value="retailer">Retailer Purchase Data</option>
+      <option value="digital">Digital vs. Physical Data</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="crosswalk">CrossWalk Services:</label>
+    <input type="checkbox" id="crosswalk">
+  </div>
+
+  <div id="crosswalkOptions" style="display: none;">
+    <label for="crosswalkProviders">Select CrossWalk Providers:</label>
+    <select id="crosswalkProviders">
+      <option value="0">No Provider</option>
+      <option value="1">1 Provider ($50,000)</option>
+      <option value="2">2 Providers ($100,000)</option>
+      <option value="3">3 Providers ($150,000)</option>
+      <option value="4">4 Providers ($200,000)</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="crosswalkRefresh">CrossWalk Refresh:</label>
+    <input type="checkbox" id="crosswalkRefresh">
+  </div>
+
+  <div id="refreshOptions" style="display: none;">
+    <label for="refreshes">Select Data Refreshes:</label>
+    <select id="refreshes">
+      <option value="0">No Refresh</option>
+      <option value="1">1 Time ($7,500)</option>
+      <option value="2">2 Times ($15,000)</option>
+      <option value="3">3 Times ($22,500)</option>
+      <option value="4">4 Times ($30,000)</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="identifiable">Personally Identifiable Information:</label>
+    <input type="checkbox" id="identifiable">
+  </div>
+
+  <div>
+    <label for="audiences">Select Marketable Audiences:</label>
+    <select id="audiences" multiple>
+      <option value="brand">Brand Buyers</option>
+      <option value="category">Category / Channel Buyers</option>
+      <option value="retailer-specific">Retailer-Specific Buyers</option>
+      <option value="adhoc">Adhoc</option>
+    </select>
+  </div>
+
+  <div>
+    <button id="calculate">Calculate Price</button>
+  </div>
+</form>
+
+<div id="summary"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const calculateButton = document.getElementById("calculate");
+  const summaryDiv = document.getElementById("summary");
+  const crosswalkCheckbox = document.getElementById("crosswalk");
+  const crosswalkOptions = document.getElementById("crosswalkOptions");
+  const crosswalkRefreshCheckbox = document.getElementById("crosswalkRefresh");
+  const refreshOptions = document.getElementById("refreshOptions");
+
+  crosswalkCheckbox.addEventListener("change", function() {
+    crosswalkOptions.style.display = this.checked ? "block" : "none";
+  });
+
+  crosswalkRefreshCheckbox.addEventListener("change", function() {
+    refreshOptions.style.display = this.checked ? "block" : "none";
+  });
+
+  calculateButton.addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent form submission
+
+    // Calculate the price based on selections
+    let totalPrice = 0;
+    let itemizedSummary = "";
+
+    const categoryTypeSelect = document.getElementById("categoryType");
+    const categoriesSelect = document.getElementById("categories");
+    const crosswalkProvidersSelect = document.getElementById("crosswalkProviders");
+    const refreshesSelect = document.getElementById("refreshes");
+    const identifiableCheckbox = document.getElementById("identifiable");
+    const audiencesSelect = document.getElementById("audiences");
+
+    if (categoryTypeSelect.value === "own") {
+      if (categoriesSelect.value.includes("item")) {
+        totalPrice += 250000;
+        itemizedSummary += "Item Purchase Data: $250,000<br>";
+      }
+      if (categoriesSelect.value.includes("retailer")) {
+        totalPrice += 200000;
+        itemizedSummary += "Retailer Purchase Data: $200,000<br>";
+      }
+      if (categoriesSelect.value.includes("digital")) {
+        totalPrice += 50000;
+        itemizedSummary += "Digital vs. Physical Data: $50,000<br>";
+      }
+    } else if (categoryTypeSelect.value === "all") {
+      if (categoriesSelect.value.includes("item")) {
+        totalPrice += 500000;
+        itemizedSummary += "Item Purchase Data: $500,000<br>";
+      }
+      if (categoriesSelect.value.includes("retailer")) {
+        totalPrice += 400000;
+        itemizedSummary += "Retailer Purchase Data: $400,000<br>";
+      }
+      if (categoriesSelect.value.includes("digital")) {
+        totalPrice += 100000;
+        itemizedSummary += "Digital vs. Physical Data: $100,000<br>";
+      }
+    }
+
+    if (crosswalkCheckbox.checked) {
+      const selectedCrosswalkProvider = crosswalkProvidersSelect.options[crosswalkProvidersSelect.selectedIndex];
+      const providerCost = parseInt(selectedCrosswalkProvider.value) * 50000;
+      totalPrice += providerCost;
+      itemizedSummary += `CrossWalk Services: ${selectedCrosswalkProvider.text} ($${providerCost.toLocaleString()})<br>`;
+    }
+
+    if (crosswalkRefreshCheckbox.checked) {
+      const selectedRefreshes = refreshesSelect.options[refreshesSelect.selectedIndex];
+      const refreshCost = parseInt(selectedRefreshes.value) * 7500;
+      totalPrice += refreshCost;
+      itemizedSummary += `CrossWalk Refresh: ${selectedRefreshes.text} ($${refreshCost.toLocaleString()})<br>`;
+    }
+
+    if (identifiableCheckbox.checked) {
+      if (categoryTypeSelect.value === "own") {
+        totalPrice += 1500000;
+        itemizedSummary += "Personally Identifiable Information: $1,500,000<br>";
+      } else if (categoryTypeSelect.value === "all") {
+        totalPrice += 3000000;
+        itemizedSummary += "Personally Identifiable Information: $3,000,000<br>";
+      }
+
+      const selectedAudiences = Array.from(audiencesSelect.selectedOptions).map(option => option.textContent);
+      if (selectedAudiences.length > 0) {
+        itemizedSummary += `Marketable Audiences: ${selectedAudiences.join(', ')}<br>`;
+      }
+    }
+
+    // Display the result
+    summaryDiv.innerHTML = `
+      <h2>Summary</h2>
+      ${itemizedSummary}
+      <p>Total Price: $${totalPrice.toLocaleString()}</p>
+    `;
+  });
+});
+</script>
+</body>
+</html>
